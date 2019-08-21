@@ -1,36 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-#define PIO_BASE 0x60000
-
 int main()
 {
   // read/write to axi block
-  volatile uint32_t * pio = (uint32_t *) PIO_BASE;
+  volatile uint32_t * master = (uint32_t *) 0x10013000;
+  volatile uint32_t * slave = (uint32_t *) 0x10014000;
 
-  volatile uint32_t * odata   = pio;
-  volatile uint32_t * oenable = pio + 1;
-  volatile uint32_t * idata   = pio + 2;
+  *(slave + (0x78 >> 2)) = 1;
 
-  uint32_t odatas[5] = {0xDEADBEEF, 0xF0F0F0F0, 0xABCD1234, 0x01234567, 0xFEDCBA98};
-  uint32_t oenables[5] = {0xF0F0F0F0, 0x0F0F0F0F, 0xDEADBEEF, 0x89ABCDEF, 0x7654321};
+  *(master + (0x3c >> 2)) = 0x0;
+  *(slave + (0x48 >> 2)) = 0x25;
+  *(master + (0x48 >> 2)) = 0x13;
+  *(slave + (0x48 >> 2)) = 0xA2;
+  *(master + (0x48 >> 2)) = 0xB4;
+  *(slave + (0x48 >> 2)) = 0x0F;
+  *(master + (0x48 >> 2)) = 0xF0;
+  *(slave + (0x48 >> 2)) = 0xF0;
+  *(master + (0x48 >> 2)) = 0x0F;
 
-  int fail = 0;
-  for (int i = 0; i < 5; i++) {
-    *odata = odatas[i];
-    *oenable = oenables[i];
-
-    fail |= ((*odata ^ *oenable) != *idata);
+  int i;
+  for (i = 0; i<200; i++){
+      asm("");
   }
 
-  int test_len = 100;
-  for (int i = 0; i < test_len; i++) {
-    *odata = i;
-    *oenable = test_len - i;
-
-    fail |= ((*odata ^ *oenable) != *idata);
+  if ((*(slave + (0x4c >> 2)) == 0x13) && (*(master + (0x4c >> 2)) == 0x25)){
+  	if ((*(slave + (0x4c >> 2)) == 0xB4) && (*(master + (0x4c >> 2)) == 0xA2)){
+      if ((*(slave + (0x4c >> 2)) == 0xF0) && (*(master + (0x4c >> 2)) == 0x0F)){
+        if ((*(slave + (0x4c >> 2)) == 0x0F) && (*(master + (0x4c >> 2)) == 0xF0)){
+  		    return 0;
+        }
+      }
+    }
   }
-
-  return fail;
+	return 1;
 }
