@@ -1,6 +1,6 @@
 [
     {
-     	"commit": "d673fc99ebff453d095eedc3ecab7e51a01fcb42",
+     	"commit": "2078165d28692fb904aa40b8a59587b07da44621",
         "name": "soc-testsocket-sifive",
         "source": "git@github.com:kritikbhimani/soc-testsocket-sifive.git"
     },
