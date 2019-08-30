@@ -1,3 +1,12 @@
+```bash
+wit init workspace_spi -a git@github.com:kritikbhimani/block-spi-sifive::block-spi-sifive -a git@github.com:sifive/environment-csoc-iponboarding
+cd workspace_spi
+rm -rf sifive-blocks && git clone -b spislave git@github.com:kritikbhimani/sifive-blocks
+wake --init .
+cd block-spi-sifive
+wake -v 'runSimWith pioDUT VCS'
+```
+
 ## Getting Started
 
 ### Dependencies

@@ -1,33 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define SPI_TXFIFO 0x48
+#define SPI_RXFIFO 0x4C
+
+#define SPI0_BASE 0x10013000 // master
+#define SPI0_REG(offset) *(uint8_t *)(SPI0_BASE + offset)
+#define SPI1_BASE 0x10014000 // slave
+#define SPI1_REG(offset) *(uint8_t *)(SPI1_BASE	+ offset)
+
 int main()
 {
-  // read/write to axi block
-  volatile uint32_t * master = (uint32_t *) 0x10013000;
-  volatile uint32_t * slave = (uint32_t *) 0x10014000;
+  SPI1_REG(0x78) = 1; // enable slave mode
 
-  *(slave + (0x78 >> 2)) = 1;
+  SPI0_REG(0x3C) = 0;
 
-  *(master + (0x3c >> 2)) = 0x0;
-  *(slave + (0x48 >> 2)) = 0x25;
-  *(master + (0x48 >> 2)) = 0x13;
-  *(slave + (0x48 >> 2)) = 0xA2;
-  *(master + (0x48 >> 2)) = 0xB4;
-  *(slave + (0x48 >> 2)) = 0x0F;
-  *(master + (0x48 >> 2)) = 0xF0;
-  *(slave + (0x48 >> 2)) = 0xF0;
-  *(master + (0x48 >> 2)) = 0x0F;
+  SPI1_REG(SPI_TXFIFO) = 0x25;
+  SPI0_REG(SPI_TXFIFO) = 0x13;
+  SPI1_REG(SPI_TXFIFO) = 0xA2;
+  SPI0_REG(SPI_TXFIFO) = 0xB4;
+  SPI1_REG(SPI_TXFIFO) = 0x0F;
+  SPI0_REG(SPI_TXFIFO) = 0xF0;
+  SPI1_REG(SPI_TXFIFO) = 0xF0;
+  SPI0_REG(SPI_TXFIFO) = 0x0F;
 
   int i;
-  for (i = 0; i<200; i++){
+  for (i = 0; i<200; i++){ // arbitrary delay
       asm("");
   }
 
-  if ((*(slave + (0x4c >> 2)) == 0x13) && (*(master + (0x4c >> 2)) == 0x25)){
-  	if ((*(slave + (0x4c >> 2)) == 0xB4) && (*(master + (0x4c >> 2)) == 0xA2)){
-      if ((*(slave + (0x4c >> 2)) == 0xF0) && (*(master + (0x4c >> 2)) == 0x0F)){
-        if ((*(slave + (0x4c >> 2)) == 0x0F) && (*(master + (0x4c >> 2)) == 0xF0)){
+  if (SPI1_REG(SPI_RXFIFO) == 0x13 && SPI0_REG(SPI_RXFIFO) == 0x25){
+  	if (SPI1_REG(SPI_RXFIFO) == 0xB4 && SPI0_REG(SPI_RXFIFO) == 0xA2){
+      if (SPI1_REG(SPI_RXFIFO) == 0xF0 && SPI0_REG(SPI_RXFIFO) == 0x0F){
+        if (SPI1_REG(SPI_RXFIFO) == 0x0F && SPI0_REG(SPI_RXFIFO) == 0xF0){
   		    return 0;
         }
       }
