@@ -124,3 +124,38 @@ publish driverImplementations = pioDriver, Nil
 # Documentation
 publish scribbleDirectories =  simplify "{blockPIOSifiveRoot}/docs/scribble", Nil
 
+
+def makeSkeletonUartDUTPlan name blocks =
+  def testharness = "sifive.blocks.pio.SkeletonUartTestHarness"
+  def config = "sifive.skeleton.DefaultConfig"
+  makeRocketChipDUTPlan name sifiveSkeletonScalaModule testharness config
+
+def makeTestSocketUartDUT name blocks =
+  def baseDUT =
+    makeSkeletonUVMDUTPlan name Nil
+    | addRocketChipDUTPlanScalaBlock simUARTBlock
+    | addRocketChipDUTPlanScalaBlock testFinisherBlock
+  foldl addRocketChipDUTPlanScalaBlock.flip baseDUT blocks
+
+global def uartDUT = makeTestSocketUartDUT "uart" Nil
+
+def uart1 =
+  def programName = "uart1"
+  def cFiles =
+    source "{blockPIOSifiveRoot}/tests/c/demo/mainuart1.c",
+    Nil
+  makeTestProgramPlan programName cFiles
+
+global def demoUart1Test =
+  def name = "demo"
+  def block = testFinisherBlock
+  def program = uart1
+  def plusargs =
+    NamedArg        "verbose",
+    NamedArgInteger "random_seed"      1234,
+    NamedArgInteger "tilelink_timeout" 16000,
+    NamedArgInteger "max-cycles"       50000,
+    Nil
+  makeBlockTest name block program plusargs
+
+publish dutTests = demoUart1Test, Nil
