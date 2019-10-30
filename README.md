@@ -5,7 +5,7 @@ cd sifive-blocks && git remote add clone1 git@github.com:kritikbhimani/sifive-bl
 cd freedom-devicetree-tools && git remote add clone1 git@github.com:kritikbhimani/freedom-devicetree-tools && git pull clone1 && git checkout block-uart-sifive && cd ..
 wake --init .
 cd block-spi-sifive
-wake -v 'runSimWith pioDUT VCS'
+wake -v runSim uartDUT
 ```
 # Overview
 
