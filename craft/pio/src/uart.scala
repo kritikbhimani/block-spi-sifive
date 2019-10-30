@@ -15,11 +15,14 @@ import freechips.rocketchip.util.{ElaborationArtefacts}
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.subsystem._
 import freechips.rocketchip.regmapper._
+import freechips.rocketchip.devices.debug.Debug
+import freechips.rocketchip.diplomaticobjectmodel.ConstructOM
 
 import sifive.skeleton._
 
+import sifive.blocks.devices.uart._
 
-
+class WithDummyUARTConfig extends Config(Parameters.empty)
 
 class SkeletonUartDUT(harness: LazyScope)(implicit p: Parameters) extends SkeletonDUT(harness)
 {
