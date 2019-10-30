@@ -1,6 +1,6 @@
-global def blockPIOSifiveRoot = simplify "{here}/../.."
+def blockPIOSifiveRoot = simplify "{here}/../.."
 
-global def loopbackScalaModule =
+def loopbackScalaModule =
   def name = "loopback"
   def path = "{blockPIOSifiveRoot}/craft/loopback"
   def scalaVersion = sifiveSkeletonScalaModule.getScalaModuleScalaVersion
@@ -10,7 +10,7 @@ global def loopbackScalaModule =
   | setScalaModuleDeps deps
   | setScalaModuleScalacOptions ("-Xsource:2.11", Nil)
 
-global def pioScalaModule =
+def pioScalaModule =
   def name = "pio"
   def rootDir = "{blockPIOSifiveRoot}/craft/pio"
   def scalaVersion = sifiveSkeletonScalaModule.getScalaModuleScalaVersion
@@ -20,110 +20,10 @@ global def pioScalaModule =
   | setScalaModuleDeps deps
   | setScalaModuleScalacOptions ("-Xsource:2.11", Nil)
 
-global def pioBlock =
+def pioBlock =
   def scalaModule = pioScalaModule
-  def config = "sifive.blocks.pio.WithpioTop"
+  def config = "sifive.blocks.pio.WithDummyUARTConfig"
   makeScalaBlock scalaModule config
-
-global def pio16Block =
-  setScalaBlockConfig "sifive.blocks.pio.WithpioTop2" pioBlock
-
-publish dutSimCompileOptionsHooks = pioHook, loopbackHook, Nil
-
-def loopbackHook =
-  def name = "loopback"
-  def addSources = source "{blockPIOSifiveRoot}/rtl/verilog/loopback/loopback.sv", _
-  makeBlackBoxHook name (editDUTSimCompileOptionsSourceFiles addSources)
-
-def pioHook =
-  def name = "pio"
-  def addSources = source "{blockPIOSifiveRoot}/rtl/verilog/pio/pio.sv", _
-  makeBlackBoxHook name (editDUTSimCompileOptionsSourceFiles addSources)
-
-global def demo =
-  def programName = "demo"
-  def cFiles =
-    source "{blockPIOSifiveRoot}/tests/c/demo/main.c",
-    Nil
-  makeTestProgramPlan programName cFiles
-
-global def demo16 =
-  demo
-  | setTestProgramPlanName "demo16"
-
-global def pioDUT =
-  def name = "pioDUT"
-  def blocks = pioBlock, Nil
-  makeTestSocketDUT name blocks
-
-global def pio16DUT =
-  def name = "pio16DUT"
-  def blocks = pio16Block, Nil
-  makeTestSocketDUT name blocks
-
-global def pioVC707DUT =
-  def name = "pioVC707DUT"
-  def blocks = pioBlock, Nil
-  def frequency = 50
-  makeVC707TestSocketDUT name frequency blocks
-
-publish dutTests = demoPioTest, demoPio16Test, Nil
-
-global def demoPioTest =
-  def name = "demo"
-  def block = pioBlock
-  def program = demo
-  def plusargs =
-    NamedArg        "verbose",
-    NamedArgInteger "random_seed"      1234,
-    NamedArgInteger "tilelink_timeout" 16000,
-    NamedArgInteger "max-cycles"       50000,
-    Nil
-  makeBlockTest name block program plusargs
-
-global def demoPio16Test =
-  def name = "demo16"
-  def block = pio16Block
-  def program = demo16
-  def plusargs =
-    NamedArg        "verbose",
-    NamedArgInteger "random_seed"      1234,
-    NamedArgInteger "tilelink_timeout" 16000,
-    NamedArgInteger "max-cycles"       50000,
-    Nil
-  makeBlockTest name block program plusargs
-
-publish vivadoVsrcHooks =
-  def makeSource file _ = source file, Nil
-  makeBlackBoxHook "pio"          "{blockPIOSifiveRoot}/rtl/verilog/pio/pio.sv".makeSource,
-  makeBlackBoxHook "loopback"     "{blockPIOSifiveRoot}/rtl/verilog/loopback/loopback.sv".makeSource,
-  Nil
-
-def pioDriver =
-  def sourceFiles =
-    (sources "{blockPIOSifiveRoot}/drivers/metal" `.*.c`)
-    ++ (sources "{blockPIOSifiveRoot}/drivers/metal" `.*.h`)
-
-  def compatibleStrings = "sifive,pio-0.1.0", Nil
-  def vendor = "sifive"
-  def deviceName = "pio"
-  def cFiles = sourceFiles
-  def includeDirs = "{blockPIOSifiveRoot}/drivers/metal", Nil
-  def visibleFiles = sourceFiles
-
-  makeDriverImplementation
-  compatibleStrings
-  vendor
-  deviceName
-  cFiles
-  includeDirs
-  visibleFiles
-
-publish driverImplementations = pioDriver, Nil
-
-# Documentation
-publish scribbleDirectories =  simplify "{blockPIOSifiveRoot}/docs/scribble", Nil
-
 
 def makeSkeletonUartDUTPlan name blocks =
   def testharness = "sifive.blocks.pio.SkeletonUartTestHarness"
@@ -132,12 +32,12 @@ def makeSkeletonUartDUTPlan name blocks =
 
 def makeTestSocketUartDUT name blocks =
   def baseDUT =
-    makeSkeletonUVMDUTPlan name Nil
+    makeSkeletonUartDUTPlan name Nil
     | addRocketChipDUTPlanScalaBlock simUARTBlock
     | addRocketChipDUTPlanScalaBlock testFinisherBlock
   foldl addRocketChipDUTPlanScalaBlock.flip baseDUT blocks
 
-global def uartDUT = makeTestSocketUartDUT "uart" Nil
+global def uartDUT = makeTestSocketUartDUT "uart" (pioBlock, Nil)
 
 def uart1 =
   def programName = "uart1"
@@ -147,8 +47,8 @@ def uart1 =
   makeTestProgramPlan programName cFiles
 
 global def demoUart1Test =
-  def name = "demo"
-  def block = testFinisherBlock
+  def name = "uart1"
+  def block = pioBlock
   def program = uart1
   def plusargs =
     NamedArg        "verbose",

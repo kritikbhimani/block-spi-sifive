@@ -1,3 +1,12 @@
+```bash
+wit init workspace_uart -a git@github.com:kritikbhimani/block-spi-sifive::block-uart-sifive -a git@github.com:sifive/environment-csoc-iponboarding
+cd workspace_uart
+cd sifive-blocks && git remote add clone1 git@github.com:kritikbhimani/sifive-blocks && git pull clone1 && git checkout parity2 && cd ..
+cd freedom-devicetree-tools && git remote add clone1 git@github.com:kritikbhimani/freedom-devicetree-tools && git pull clone1 && git checkout block-uart-sifive && cd ..
+wake --init .
+cd block-spi-sifive
+wake -v 'runSimWith pioDUT VCS'
+```
 # Overview
 
 This branch represents the Parallel IO (PIO) block and loopback Verification IP (VIP) in their completed state. 

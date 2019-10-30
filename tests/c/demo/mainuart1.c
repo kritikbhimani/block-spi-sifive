@@ -7,6 +7,7 @@
 #define RXCTRL 12
 #define IE 16
 #define PARITY 28
+#define WIRE4 32
 #define EITHER8OR9 36
 
 #define UART_BASE 0x10013000
@@ -31,6 +32,7 @@ int main()
   UART_REG32(RXCTRL) = 1; // enable rx
   UART_REG32(IE) = 0;
   UART_REG32(PARITY) = 3; // enable parity
+  UART_REG32(WIRE4) = 1;
 //  * (uart_base + 0x8) = 0x1;
 
   tx(0x61); // send tx data
