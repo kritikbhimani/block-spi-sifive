@@ -6,6 +6,7 @@
 #define TXCTRL 8
 #define RXCTRL 12
 #define IE 16
+#define DIV 24
 #define PARITY 28
 #define WIRE4 32
 #define EITHER8OR9 36
@@ -14,12 +15,12 @@
 #define UART_REG(offset) *(uint8_t *)(UART_BASE + offset)
 #define UART_REG32(offset) *(uint32_t *)(UART_BASE + offset)
 
-void tx(uint32_t txdata) 
+static inline void tx(uint32_t txdata) 
 {
   UART_REG32(TXDATA) = txdata;
 }
 
-uint32_t rx(void) 
+static inline uint32_t rx() 
 {
   return UART_REG32(RXDATA);
 }
@@ -28,6 +29,7 @@ int main()
 {
   int fail = 1;
 
+  UART_REG32(DIV) = 19; // override default
   UART_REG32(TXCTRL) = 3 | (3 << 16); // enable tx and nstop = 1
   UART_REG32(RXCTRL) = 1; // enable rx
   UART_REG32(IE) = 0;

@@ -33,7 +33,6 @@ def makeSkeletonUartDUTPlan name blocks =
 def makeTestSocketUartDUT name blocks =
   def baseDUT =
     makeSkeletonUartDUTPlan name Nil
-    | addRocketChipDUTPlanScalaBlock simUARTBlock
     | addRocketChipDUTPlanScalaBlock testFinisherBlock
   foldl addRocketChipDUTPlanScalaBlock.flip baseDUT blocks
 
@@ -54,7 +53,7 @@ global def demoUart1Test =
     NamedArg        "verbose",
     NamedArgInteger "random_seed"      1234,
     NamedArgInteger "tilelink_timeout" 16000,
-    NamedArgInteger "max-cycles"       50000,
+    NamedArgInteger "max-cycles"       20000,
     Nil
   makeBlockTest name block program plusargs
 

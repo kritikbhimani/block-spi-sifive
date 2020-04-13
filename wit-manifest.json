@@ -1,8 +1,8 @@
 [
     {
-        "commit": "471dfa250b87a16a461f583e2b7eed69293cef02",
+        "commit": "bb360a477a791dfc8fa54ecbabb06e166097bbf9",
         "name": "soc-testsocket-sifive",
-        "source": "git@github.com:sifive/soc-testsocket-sifive.git"
+        "source": "git@github.com:kritikbhimani/soc-testsocket-sifive"
     },
     {
         "commit": "84d8bb615feb2975d6c4f543726563ca71c4538c",
@@ -13,5 +13,20 @@
         "commit": "1c38068e5338dce8594f3aef0466c6333f46a24d",
         "name": "api-scala-sifive",
         "source": "git@github.com:sifive/api-scala-sifive.git"
+    },
+    {
+        "commit": "61fa36f458a63183b04c547110619a07f89ff268",
+        "name": "rocket-chip",
+        "source": "git@github.com:kritikbhimani/rocket-chip.git"
+    },
+    {
+        "commit": "37b1ef3b2571688a1451bbbfefdeec7f2c8c3979",
+        "name": "freedom-devicetree-tools",
+        "source": "git@github.com:kritikbhimani/freedom-devicetree-tools"
+    },
+    {
+        "commit": "991387b8a08f4f5e03c57ddecc8796cdbcb4de12",
+        "name": "sifive-blocks",
+        "source": "git@github.com:kritikbhimani/sifive-blocks"
     }
 ]
