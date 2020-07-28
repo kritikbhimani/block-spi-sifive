@@ -29,6 +29,10 @@ global def pio16Block =
   setScalaBlockConfig "sifive.blocks.pio.WithpioTop2" pioBlock
 
 publish dutSimCompileOptionsHooks = pioHook, loopbackHook, Nil
+publish dutSimExecuteOptionsHooks = resHook, Nil
+publish vcsDUTSimCompileOptionsHooks = resHook1, Nil
+def resHook dut = Some (editDUTSimExecuteOptionsResources ("synopsys/verdi_pli/P-2019.06-SP2", _))
+def resHook1 dut = Some (editPrivateVCSDUTSimCompileOptionsDUTOpts (setDUTSimCompileOptionsResources ("synopsys/vcs/P-2019.06-SP2", "synopsys/verdi/P-2019.06-SP2", Nil)))
 
 def loopbackHook =
   def name = "loopback"
@@ -75,6 +79,7 @@ global def demoPioTest =
   def program = demo
   def plusargs =
     NamedArg        "verbose",
+    NamedArg        "genfsdb",
     NamedArgInteger "random_seed"      1234,
     NamedArgInteger "tilelink_timeout" 16000,
     NamedArgInteger "max-cycles"       50000,
