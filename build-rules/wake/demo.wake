@@ -80,6 +80,7 @@ global def demoPioTest =
   def plusargs =
     NamedArg        "verbose",
     NamedArg        "genfsdb",
+    NamedArgString "fsdbfile"      "sim1.fsdb",
     NamedArgInteger "random_seed"      1234,
     NamedArgInteger "tilelink_timeout" 16000,
     NamedArgInteger "max-cycles"       50000,
