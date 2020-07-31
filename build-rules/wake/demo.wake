@@ -30,9 +30,10 @@ global def pio16Block =
 
 publish dutSimCompileOptionsHooks = pioHook, loopbackHook, Nil
 publish dutSimExecuteOptionsHooks = resHook, Nil
-publish vcsDUTSimCompileOptionsHooks = resHook1, Nil
+publish vcsDUTSimCompileOptionsHooks = resHook1, resHook2, Nil
 def resHook dut = Some (editDUTSimExecuteOptionsResources ("synopsys/verdi_pli/P-2019.06-SP2", _))
 def resHook1 dut = Some (editPrivateVCSDUTSimCompileOptionsDUTOpts (setDUTSimCompileOptionsResources ("synopsys/vcs/P-2019.06-SP2", "synopsys/verdi/P-2019.06-SP2", Nil)))
+def resHook2 dut = Some (editPrivateVCSDUTSimCompileOptionsDUTOpts (editDUTSimCompileOptionsDefines ((NamedArg "DEBUGFSDB"), _)))
 
 def loopbackHook =
   def name = "loopback"
